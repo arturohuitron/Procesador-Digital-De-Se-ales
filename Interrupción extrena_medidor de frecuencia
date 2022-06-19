@@ -1,0 +1,34 @@
+void EXTI9_5_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+
+  /* USER CODE END EXTI9_5_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
+  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+  //get_flag();
+  if(flag==0){
+	  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
+	  val1 = HAL_GetTick();
+	  flag=1;
+	  //set_flag(1);
+	  //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_1);
+  }
+  else if(flag==1){
+	  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 0);
+	  flag=0;
+	  //set_flag(0);
+	  val2 = HAL_GetTick();
+	  diff = val2-val1;
+	  freq2 = get_freq();
+	  freq2 = 1000 / diff; //Ya que da en ms
+
+	  //set_freq(freq2);
+	  send_value();
+  }
+  /* USER CODE END EXTI9_5_IRQn 1 */
+}
+/* USER CODE BEGIN 1 */
+void send_value(){
+	sprintf(msg,"F: %.3f Hz \n", freq2);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
+}
